@@ -1,0 +1,344 @@
+% to be included by dsmts-userguide.tex
+
+\subsection{dstms--001 --- The birth-death process}
+
+\subsubsection{dstms--001--01} 
+
+This model contains one species, denoted by $X$. The amount of $X$
+present in the system is measured in numbers of molecules. The initial
+number of molecules of $X$ is 100. The birth reaction 
+\[
+X \longrightarrow 2X
+\] 
+has rate parameter \verb$Lambda=0.1$, and the death reaction 
+\[
+X\longrightarrow \emptyset
+\]
+has rate parameter \verb$Mu=0.11$. These
+rate parameters are global, which means that they apply to the whole
+model and not just to a single reaction. Mass-action stochastic
+kinetics is assumed. The SBML-shorthand for the model is stored in the
+file \verb$dsmts-001-01.mod$, and this is intended to be
+human-readable and self-documenting. The SBML file itself is stored in
+\verb$dsmts-001-01.xml$, and this is generated automatically from the
+corresponding SBML-shorthand. The mean and standard deviation of the
+associated Markov process are given in the plots below, and are stored
+in the files \verb$dsmts-001-01-mean.csv$ and
+\verb$dsmts-001-01-sd.csv$ respectively.
+
+\addplots{dsmts-001-01}
+
+\subsubsection{dsmts--001--02}
+
+This model is the same as \texttt{dsmts-001-01}, except that the rate
+parameters \verb$Lambda$ and \verb$Mu$ are declared to be local rather
+than global. Therefore the rate parameters apply only to their
+respective reactions, but this does not affect the model output
+here. 
+
+\addplots{dsmts-001-02}
+
+\subsubsection{dsmts--001--03}
+
+This model is the same as \texttt{dsmts-001-01}, except that the
+values of the rate parameters are \verb$Lambda=1$ and
+\verb$Mu=1.1$. The skewed distribution associated with this model
+means that simulators are likely to fail the suggested standard
+deviation test for large values of \verb$t$ (as the normality
+assumption underlying the test is clearly invalid in this
+case).
+
+\addplots{dsmts-001-03}
+
+\subsubsection{dsmts--001--04}
+
+This is the same as \verb$dsmts-001-01$, except that the initial
+number of molecules of \verb$X$ is 10.
+
+\addplots{dsmts-001-04}
+
+\subsubsection{dsmts--001--05}
+
+The same as \verb$dsmts-001-01$, except that the initial number of
+molecules of X is 10,000. Due to the large number of molecules
+involved, tests using this model will take longer to complete than for
+many other models in the suite.
+
+\addplots{dsmts-001-05}
+
+\subsubsection{dsmts--001--06}
+
+The same as \verb$dsmts-001-01$, except that: (i) There is another
+species, named \texttt{Sink}, with initial amount 0. The \verb$Sink$
+species is declared to be a boundary condition, which means that its
+value is not determined by the model reactions but remains constant at
+its initial level. (ii) The death reaction is now:
+\[
+X \longrightarrow Sink 
+\]
+This model checks that the boundary condition attribute is
+handled correctly.
+
+\addplots{dsmts-001-06}
+
+\subsubsection{dsmts--001--07}
+
+The same as \verb$dsmts-001-06$, except that the \texttt{Sink} species
+is not a boundary condition. This model is the first one involving two
+time-varying species.
+
+\addplots{dsmts-001-07}
+
+\subsubsection{dsmts--001--08}
+
+Same as \verb$dsmts-001-01$, except that the \verb$Cell$ compartment
+is declared to have \verb$size=1$. This shouldn't affect
+anything.
+
+\addplots{dsmts-001-08}
+
+\subsubsection{dsmts--001--09} 
+
+Same as \verb$dsmts-001-01$, except that the \verb$Cell$ compartment
+is declared to have \verb$size=2$. Again, this shouldn't affect
+anything, due to the presence of the \verb$hasOnlySubstanceUnits$ flag
+in the species declaration.
+
+\addplots{dsmts-001-09}
+
+\subsubsection{dsmts--001--10}
+
+Same as \verb$dsmts-001-01$, except that: (i) the \verb$Cell$
+compartment is declared to have \verb$size=1$ (ii)
+\verb$hasOnlySubstanceUnits$ is not declared to be true. Although many
+simulators will mis-interpret this model, most will get the right
+output due to the unit compartmental size. 
+
+\addplots{dsmts-001-10}
+
+\subsubsection{dsmts--001--11}
+
+This is the same as \verb$dsmts-001-01$, except that: (i) the
+\verb$Cell$ compartment is declared to have \verb$size=2$ (ii)
+\verb$hasOnlySubstanceUnits$ is not declared to be true. Many
+simulators (which pass the earlier tests) are expected to fail this
+test, due to a lack of sophisticated handling of the
+\verb$hasOnlySubstanceUnits$ tag. It would be reasonable for a
+simulator to refuse to accept such a model, but a simulator should not
+accept the model and then produce incorrect
+output.
+
+\addplots{dsmts-001-11}
+
+\subsubsection{dsmts--001--12}
+
+This is the same as \verb$dsmts-001-01$, except that the rate law is
+written as \verb$Lambda*X*0.5*2$. This is designed to test the math
+expression parsing.
+
+\addplots{dsmts-001-12}
+
+\subsubsection{dsmts--001--13}
+
+This is the same as \verb$dsmts-001-01$, except that \verb$Lambda=0.2$
+and the rate law is written as \verb$Lambda*X*0.5$. This is designed
+to test the math expression parsing.
+
+\addplots{dsmts-001-13}
+
+\subsubsection{dsmts--001--14}
+
+This is the same as \verb$dsmts-001-01$, except that the rate law is
+written as \verb$Lambda*X/2/0.5$. This is designed to test the math
+expression parsing.
+
+\addplots{dsmts-001-14}
+
+\subsubsection{dsmts--001--15}
+
+This is the same as \verb$dsmts-001-01$, except that the rate law is
+written as \verb$Lambda*(X/2)/0.5$. This is designed to test the math
+expression parsing.
+
+\addplots{dsmts-001-15}
+
+\subsubsection{dsmts--001--16}
+
+This is the same as \verb$dsmts-001-01$, except that the rate law is
+written as \verb$Lambda*X/(2/2)$. This is designed to test the math
+expression parsing.
+
+\addplots{dsmts-001-16}
+
+\subsubsection{dsmts--001--17}
+
+This is the same as \verb$dsmts-001-08$, except that the (unit)
+compartmental volume is explicitly included in the rate laws (this
+shouldn't affect anything).
+
+\addplots{dsmts-001-17}
+
+\subsubsection{dsmts--001--18}
+
+This is the same as \verb$dsmts-001-17$, except that the
+compartmental volume is set to 0.5.
+
+\addplots{dsmts-001-18}
+
+
+
+\subsection{dsmts--002 --- The immigration-death process}
+
+\subsubsection{dsmts--002--01}
+
+This model contains one species, denoted by $X$. The amount of $X$
+present in the system is measured in numbers of molecules. The initial
+number of molecules of $X$ is $0$. The immigration reaction
+\[
+\emptyset \longrightarrow X
+\] 
+has global rate parameter
+\texttt{Alpha=1}. The death reaction $X\longrightarrow \emptyset$ has
+global rate parameter\texttt{Mu=0.1}. Mass-action stochastic kinetics
+is assumed.
+
+\addplots{dsmts-002-01}
+
+\subsubsection{dsmts--002--02} 
+
+Same as \verb$dsmts-002-01$,except that
+\verb$Alpha=10$. 
+
+\addplots{dsmts-002-02}
+
+\subsubsection{dsmts--002--03} 
+
+Same as \verb$dsmts-002-02$, except the global parameter
+\verb$Alpha=10$ is overridden by the local parameter
+\verb$Alpha=5$. This is the first model that checks that local
+parameters overload global parameters.
+
+\addplots{dsmts-002-03}
+
+\subsubsection{dsmts--002--04}
+
+Same as \verb$dsmts-002-01$, except that \verb$Alpha=1000$. This model
+will be slow to run.
+
+\addplots{dsmts-002-04}
+
+\subsubsection{dsmts--002--05} 
+
+Same as \verb$dsmts-002-02$, except that: (i) There are two additional
+species: \verb$Source$ and \verb$Sink$. \verb$Source$ and \verb$Sink$
+are both boundary conditions, and they both have initial amount
+0. (ii) The immigration reaction is now: 
+\[
+Source \longrightarrow X. 
+\]
+(iii)The death reaction is now:
+\[
+X \longrightarrow Sink
+\]
+
+\addplots{dsmts-002-05}
+
+\subsubsection{dsmts--002--06} 
+
+Same as \verb$dsmts-002-05$, except that the \verb$Sink$ species is
+not a boundary condition. 
+
+\addplots{dsmts-002-06}
+
+\subsubsection{dsmts--002--07} 
+
+Same as \verb$dsmts-002-05$,except that the Sink species is a constant
+boundary condition. 
+
+\addplots{dsmts-002-07}
+
+\subsubsection{dsmts--002--08}
+
+Same as \verb$dsmts-002-01$, except that: (i) The global rate
+parameter \verb$k$ is set equal to 2. (ii) In the immigration rate,
+\verb$k$ is locally set equal to 1(iii) In the death rate, \verb$k$ is
+locally set equal to 0.1. This model is designed to test parameter
+overloading. 
+
+\addplots{dsmts-002-08}
+
+\subsection{dsmts--003 ---Dimerisation }
+
+\subsubsection{dsmts--003--01}
+
+This model contains two species, denoted by \verb$P$ and \verb$P2$,
+representing a dimerisation process. The initial numbers of molecules
+of P and P2 are 100 and 0 respectively. The dimerization reaction 
+\[
+2P \longrightarrow P2
+\]
+has global rate parameter \verb$k1=0.001$. Note
+that this is a second order reaction with rate law
+\verb$k1*P*(P-1)/2$. The dissociation reaction 
+\[
+P2 \longrightarrow 2P
+\] 
+has global rate parameter \verb$k2=0.01$. 
+
+\addplots{dsmts-003-01}
+
+\subsubsection{dsmts--003--02} 
+
+Same as \verb$dsmts-003-01$, except that: (i) the initial number of
+molecules of \verb$P$ is 1000 (ii) the values of the rate parameters
+are \verb$k1=0.0002$ and \verb$k2=0.004$. 
+
+\addplots{dsmts-003-02}
+
+\subsubsection{dsmts--003--03} 
+
+Same as \verb$dsmts-003-01$, except that in the event that the time
+parameter \verb$t$ becomes greater than or equal to 25, the species
+populations are reset to the following values: \verb$P := 100$,
+\verb$P2 := 0$. This is the first model that tests the SBML
+\verb$event$ facility.
+
+\addplots{dsmts-003-03}
+
+\subsubsection{dsmts--003--04} 
+
+Same as \verb$dsmts-003-01$, except that in the event that the number
+of \verb$P2$ molecules becomes greater than 30, the species
+populations are reset to the following values: \verb$P := 100$, 
+\verb$P2 := 0$. This is another test of SBML event
+handling.
+
+\addplots{dsmts-003-04}
+
+\subsubsection{dsmts--003--05} 
+
+Same as \verb$dsmts-003-01$, except that \verb$P$ has been removed
+from the model using the conservation law present in the system. This
+tests several things, including complex math expression
+parsing.
+
+\addplots{dsmts-003-05}
+
+\subsubsection{dsmts--003--06} 
+
+Same as \verb$dsmts-003-05$, except that the rate law is written
+slightly differently. This is testing the expression
+parser.
+
+\addplots{dsmts-003-06}
+
+\subsubsection{dsmts--003--07} 
+
+Same as \verb$dsmts-003-06$, except that the rate law is written very
+slightly differently. This is testing the expression
+parser.
+
+\addplots{dsmts-003-07}
+
+
+% eof
