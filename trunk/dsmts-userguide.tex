@@ -1,0 +1,187 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{graphicx,url,amsmath,hyperref}
+\topmargin=-0.5in
+\oddsidemargin=0in
+\evensidemargin=0in
+\textwidth=6.5in
+\textheight=9.5in
+\newcommand{\addplots}[1]{{\par\includegraphics[width=0.5\textwidth]{#1-mean}\includegraphics[width=0.5\textwidth]{#1-sd}\par}}
+
+\title{SBML DSMTS --- User Guide}
+\author{T.~W.~Evans, C.~S.~Gillespie,  \href{http://www.staff.ncl.ac.uk/d.j.wilkinson/}{D.~J.~Wilkinson}\thanks{\texttt{d.j.wilkinson@ncl.ac.uk}}}
+\date{\today}
+
+\begin{document}
+\sf\maketitle
+
+\section{Introduction} 
+
+This guide describes how the SBML discrete stochastic models test
+suite can be used to test a stochastic simulator. Testing a stochastic
+simulator is hard, since two identical simulators will never produce
+exactly the same set of results. The only sensible method is to run
+the simulation lots of times and check that the distribution of
+outcomes is correct. This can only be tested in a probabilistic way.
+The latest version of this test suite can be obtained from:
+\centerline{\url{http://www.calibayes.ncl.ac.uk/Resources/dsmts/}}
+
+\subsection{Aims and Scope of the Test Suite}
+
+The test suite is a set of SBML models each with time course data for
+the means and standard deviations of the model species. Developers may
+use the suite to check that their simulators produce results that are
+consistent with the SBML standard. The test suite assumes that the
+simulator produces output on a regular time grid. Of course exact
+stochastic simulators naturally produce output on a non-regular grid
+corresponding to individual reaction events. However, this ``step
+function'' output is easy to map onto a regular time-grid either
+post-hoc, or during the simulation run itself. Further discussion of
+this issue can be found in Chapter~6 of
+Wilkinson~(2006)(\url{http://www.staff.ncl.ac.uk/d.j.wilkinson/smfsb/}),
+to which the reader is referred for further discussion of stochastic
+simulation generally, and the use of SBML for discrete stochastic
+models in particular.
+
+\section{Structure of the Test Suite}
+
+\subsection{Contents of the Test Suite}
+
+The test directory contains the following files for each test model: 
+\begin{itemize}
+\item \verb$<model>.xml$: the SBML Level 2 test model
+\item \verb$<model>-mean.csv$: means of the simulation results at $t = 0,1,\ldots,50$
+\item \verb$<model>-sd.csv$: standard deviations of the simulation results at $t = 0,1,\ldots,50$
+\item \verb$<model>.mod$: documentation on the model in the form of SBML-shorthand
+\item \verb$<model>-mean.pdf$: plot of mean species levels against time 
+\item \verb$<model>-sd.pdf$: plot of the standard deviations of the species levels against time. 
+\end{itemize}
+The first lines of both the \verb$<model>-mean.csv$ and the
+\verb$<model>-sd.csv$ files contain the column headings. The first
+column heading is \emph{Time}, and the remaining column headings are
+the species names in the order they appear in the \verb$listOfSpecies$
+in the \verb$<model>.xml$ file. The file \verb$<model>.mod$ contains
+the SBML-shorthand for the model
+(\url{http://www.staff.ncl.ac.uk/d.j.wilkinson/software/sbml-sh/}),
+which is supposed to provide human-readable documentation for each
+model. The test suite also contains this documentation, and a file
+(\verb$model-list$) containing a simple list of all models in the test
+suite (this is useful for batch-testing against all models in the test
+suite).
+
+\section{Testing an Exact Simulator}
+
+In order to test the output from a stochastic simulator for a given
+SBML model, $n$ independent simulation runs of the simulator should be
+performed. The value of $n$ should not be less than 1,000. However,
+for the statistical tests to have reasonable power to detect problems,
+$n$ should be set to at least 10,000 (but this will be very
+time-consuming for some models). The sample means and standard
+deviations of the species amounts from the simulation runs at
+$t=0,1,\ldots,50$ can be compared with the corresponding values in the
+test suite using the statistical tests described below.
+
+\subsection{Testing the simulated mean values}
+
+A test for the simulated values of a species $X$ is as follows: Let
+$X_t^{(i)}$ be the value of $X_t$ on the $i^{\mbox{th}}$ run of the
+simulator, where $X_t$ is the random variable representing $X$ at time
+$t$. Put $\mu_t=\operatorname{E}(X_t)$ and
+$\sigma_t=\sqrt{\operatorname{Var}(X_t)}$. By the Central Limit
+Theorem, we have
+\[
+\bar{X_t} \sim N( \mu_t, \sigma_t^2/n ),\ 
+\text{ where }
+\bar{X_t}=\frac{1}{n}\sum_{i=1}^n X_t^{(i)}.
+\]
+Therefore
+\[
+\bar{X_t}-\mu_t \sim N(0,\sigma_t^2/n),
+\]
+and it follows that
+\[
+Z_t \equiv \sqrt{n}\left( \frac{\bar{X_t} -\mu_t}{\sigma_t}\right)\sim N(0,1).
+\]
+So under the null hypothesis that the simulator is correct, the $Z_t$
+values should have a standard normal distribution. In this case, most
+values will lie in the range (-3,3). Therefore, values of $Z_t$
+outside this range correspond to evidence that the simulator is in
+error.
+
+\subsection{Testing the simulated standard deviation values}
+
+For this test we need to assume the approximation $X_t\sim
+N(\mu_t,\sigma_t^2)$. From this approximation, we have:
+\[
+\frac{X_t-\mu_t}{\sigma_t} \sim N(0,1) \Rightarrow\frac{1}{\sigma_t^2}(X_t-\mu_t)^2 \sim \chi^2_1,
+\]
+and so
+\[
+\frac{1}{\sigma_t^2}\sum_{i=1}^n (X_t^{(i)}-\mu_t)^2 \sim \chi^2_n.
+\]
+Now put
+\[
+\hat{S}_t^2 \equiv \frac{1}{n}\sum_{i=1}^n(X_t^{(i)}-\mu_t^{(i)})^2
+\]
+so that
+\[
+\frac{n\hat{S}_t^2}{\sigma_t^2} \sim \chi^2_n.
+\]
+This means that $n\hat{S}_t^2/\sigma_t^2$ will have an approximate
+$N(n,2n)$ distribution. Therefore $\hat{S}_t^2/\sigma_t^2$ will have
+an approximate $ N(1,2/n)$ distribution. So
+\[
+Y_t \equiv \sqrt{\frac{n}{2}}\left(\frac{S_t^2}{\sigma_t^2} - 1\right)\sim N(0,1).
+\]
+Again, values of $Y_t$ outside the expected range for a standard
+normal variable correspond to evidence that the simulator is in
+error. However, owing to the approximation used in the development of
+this test, it is probably best to consider only values outside the
+range $(-5,5)$ as evidence of a problem.
+
+\subsection{A note on the tests}
+
+The tests are designed to test simulator accuracy. It is important to
+remember that the tests are probabilistic. If lots of tests are
+carried out, some failures would be expected to occur by chance, even
+if the simulator is behaving correctly. Also, since the standard
+deviations test is based on an approximation, the predicted failure
+probability for this test is an underestimate. Therefore we might
+expect to fail more standard deviation tests than mean tests. Running
+the entire test suite with $n=10,000$, it wouldn't be particularly
+surprising to fail 2 or 3 mean tests and 5 or 6 standard deviation
+tests in total (summed over all models and all time points), even if
+the simulator is correct.
+
+\section{Testing an Approximate Simulator}
+
+The test suite is designed first for rigorous testing of exact
+simulators. However, it should also prove useful to developers of
+approximate simulators. One way of using the test suite to assess the
+performance of an approximate simulator is to plot the means and
+standard deviations as percentages of their true values. For the mean
+values, a plot of $\bar{X_t}/\mu_t$ against $t$ should be produced for
+$t=0,1,\ldots,50$ (for $\mu_t\not=0$). Similarly, a plot of
+$\hat{S}_t/\sigma_t$ against $t$ should be produced to assess the
+standard deviation values ($\sigma_t\not=0$). Ideally, the plots will
+be close to 1 for all values of $t$, and values outside the range
+$[0.98,1.02]$ (say) is indicative of poor simulator accuracy. For
+$\mu_t=0$ or $\sigma_t=0$, a simple check should be made to ensure
+that the corresponding sample estimates are (very) close to zero.
+
+\section{Models}
+
+This section lists each model in the test suite, gives a brief
+description of it, and provides some indication of what the model is
+designed to test. It also includes plots of the means and standard
+deviations for each model.
+
+% now import the model descriptions
+
+\input dsmts-models
+
+% now do a final wrapping up?!
+
+
+
+
+\end{document}

@@ -1,0 +1,29 @@
+Reviewer: 1
+Comments to the Author
+The Newcastle group has provided the systems biology community with an extremely useful test suite that enables software authors to test stochastic simulators. The test suite is well packaged and easy to use. I am glad to see the team submitting a manuscript that publicizes their work and I have no hesitation is recommending publication.
+
+Reviewer: 2
+Comments to the Author
+I find this to be a fine paper and can find few things to comment on.  The
+work is useful and obviously being used by researchers in the field.  The
+paper is nicely and clearly written.
+
+Here are only some very small comments and suggestions for trivial
+improvements:
+
+1. In the abstract, the paragraph "Results", the authors write "This allows
+   the performance of stochastic simulators to be tested ...".  The use of
+   the term performance in this case is somewhat confusing and misleading,
+   because in many contexts it implies speed of execution, whereas I
+   believe in *this* context the authors mean correctness.  I recommend
+   using a different term than "performance" here.
+
+2. In the introduction, 1st paragraph, it is written "SBML was developed as
+   a standard format in which to describe the models ...".  It may be more
+   clear to write "represent" or "store" instead of "describe" here, as
+   SBML is a file format and to speak of it describing something seems a
+   bit strange.
+
+3. In the references, the one for Gillespie and Renshaw 2005 has a mangled
+   publication title.  The "A" should be capitalized, and preceeded by a
+   colon (:), not a hyphen.
