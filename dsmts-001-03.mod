@@ -1,4 +1,4 @@
-@model:2.3.1=BirthDeath03 "Birth-death model (001), variant 03"
+@model:2.1.1=BirthDeath03 "Birth-death model (001), variant 03"
 @units
  substance=item
 @compartments

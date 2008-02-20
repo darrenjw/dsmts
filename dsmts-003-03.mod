@@ -1,4 +1,4 @@
-@model:2.3.1=Dimerisation03 "Dimerisation model (003), variant 03"
+@model:2.1.2=Dimerisation03 "Dimerisation model (003), variant 03"
 @units
  substance=item
 @compartments
@@ -17,4 +17,4 @@
  P2 -> 2P 
  k2*P2
 @events
- reset= t>=25 : P=100; P2=0
+ reset= t>=25 : P=100, P2=0

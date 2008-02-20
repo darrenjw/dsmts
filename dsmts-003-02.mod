@@ -1,4 +1,4 @@
-@model:2.3.1=Dimerisation02 "Dimerisation model (003), variant 02"
+@model:2.1.1=Dimerisation02 "Dimerisation model (003), variant 02"
 @units
  substance=item
 @compartments

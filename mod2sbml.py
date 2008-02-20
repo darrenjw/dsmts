@@ -1,24 +1,20 @@
 #!/usr/bin/python
 # mod2sbml.py
+#$LastChangedDate$
+#$Rev$
+#$Author$
 
-# Updated: 8/6/07
 
 import libsbml,sys,re,cStringIO
 
-__doc__="""mod2sbml version 2.3.1.1
+__doc__="""mod2sbml version 2.1.2.3
 
-Copyright (C) 2005-2007, Darren J Wilkinson
- d.j.wilkinson@ncl.ac.uk
- http://www.staff.ncl.ac.uk/d.j.wilkinson/
-
-Includes modifications by Jeremy Purvis
- jep@thefoldingproblem.com
- 
+Copyright (C) 2005, Darren J Wilkinson
+d.j.wilkinson@ncl.ac.uk
+http://www.staff.ncl.ac.uk/d.j.wilkinson/
 This is GNU Free Software (General Public License)
 
-Module for parsing SBML-shorthand model files, version 2.3.1,
-and all previous versions
-
+Module for parsing SBML-shorthand model files, version 2.1.2
 Typical usage:
 >>> from mod2sbml import Parser
 >>> p=Parser()
@@ -44,12 +40,10 @@ and the following public methods:
     COMPARTMENTS=4
     SPECIES=5
     PARAMETERS=6
-    RULES=7
-    REAC1=8
-    REAC2=9
-    REAC3=10
-    REAC4=11
-    EVENTS=12
+    REAC1=7
+    REAC2=8
+    REAC3=9
+    EVENTS=10
 
     def __init__(self):
         self.context=self.SBML
@@ -97,51 +91,37 @@ object"""
                 self.handleSpecies(line,name)
             elif (self.context==self.PARAMETERS):
                 self.handleParameters(line,name)
-            elif (self.context==self.RULES):
-                self.handleRules(line,name)
             elif (self.context==self.REAC1):
                 self.handleReac1(line,name)
             elif (self.context==self.REAC2):
                 self.handleReac2(line,name)
             elif (self.context==self.REAC3):
                 self.handleReac3(line,name)
-            elif (self.context==self.REAC4):
-                self.handleReac4(line,name)
             elif (self.context==self.EVENTS):
                 self.handleEvents(line,name)
             line=self.inS.readline()
             self.count+=1
         self.context=self.SBML
+        # self.outS.write('<?xml version="1.0" encoding="UTF-8"?>\n')
+        #self.outS.write(self.d.toSBML())
         return self.d
 
     def handleSbml(self,line,name):
         # in this context, only expecting a model
         bits=line.split("=")
-        morebits=bits[0].split(":")
-        if ((morebits[0]!="@model")):
-            sys.stderr.write('Error: expected "@model:" ')
-            sys.stderr.write('at line'+str(self.count)+'\n')
+        if ((bits[0]!="@model:2.1.1") and (bits[0]!="@model:2.1.2")):
+            sys.stderr.write('Error: expected "@model:2.1.1/2" ')
+            sys.stderr.write('at line '+str(self.count)+'\n')
             raise ParseError
-        yetmorebits=morebits[1].split(".")
-        level=int(yetmorebits[0])
-        version=int(yetmorebits[1])
-        revision=int(yetmorebits[2])
-        self.mangle=100*level+10*version+revision
-        if (self.mangle>231):
-            sys.stderr.write('Error: shorthand version > 2.3.1 - UPGRADE CODE ')
-            sys.stderr.write('at line'+str(self.count)+'\n')
-            raise ParseError
-        # sys.stderr.write('lev: '+str(level)+'\n') # debug
-        self.d.setLevelAndVersion(level,version)
-        # sys.stderr.write('Leve: '+str(self.d.getLevel())+'\n') # debug
         if (len(bits)!=2):
             sys.stderr.write('Error: expected "=" at line ')
             sys.stderr.write(str(self.count)+'\n')
             raise ParseError            
         id=bits[1]
-        self.m=self.d.createModel(id)
+        self.m=libsbml.Model(id)
         if (name!=""):
             self.m.setName(name)
+        self.d.setModel(self.m)
         self.context=self.MODEL
         
     def handleModel(self,line,name):
@@ -154,7 +134,6 @@ object"""
             raise ParseError
 
     def handleNewContext(self,line,name):
-        # sys.stderr.write('handling new context '+line[:4]+'\n')
         if (line[:4]=="@com"):
             self.context=self.COMPARTMENTS
         elif (line[:4]=="@uni"):
@@ -163,8 +142,6 @@ object"""
             self.context=self.SPECIES
         elif (line[:4]=="@par"):
             self.context=self.PARAMETERS
-        elif (line[:4]=="@rul"):
-            self.context=self.RULES
         elif (line[:4]=="@rea"):
             self.context=self.REAC1
         elif (line[:4]=="@eve"):
@@ -291,39 +268,13 @@ object"""
         if (line[0]=="@"):
             self.handleNewContext(line,name)
         else:
-            bits=line.split("=")
+            (param,val)=line.split("=")
             p=self.m.createParameter()
-            p.setId(bits[0])
-            if (len(bits)==2):
-                p.setValue(eval(bits[1]))
+            p.setId(param)
+            p.setValue(eval(val))
             if (name!=""):
                 p.setName(name)
             #print self.d.toSBML()
-
-    def handleRules(self,line,name):
-        # expect either a rule or a new section
-        # in v.2.2.0, rules are fixed as type AssignmentRule
-        # this requires the assigned species to have atrribute
-        # constant set to "False"
-        if (line[0]=="@"):
-            self.handleNewContext(line,name)
-        else:
-            bits=line.split("=")
-            if (len(bits)!=2):
-                sys.stderr.write('Error: expected "=" on line ')
-                sys.stderr.write(str(self.count)+'\n')
-                raise ParseError
-            (lhs,rhs)=bits
-            # set assigned species 'constant' attribute to 'False'
-            p = self.m.getParameter(lhs)
-            if (p):
-                p.setConstant(False)
-            else:
-                s = self.m.getSpecies(lhs)
-                if (s):
-                    s.setConstant(False)
-            self.m.addRule(libsbml.AssignmentRule(lhs,rhs))
-            # print self.d.toSBML()
             
     def handleReac1(self,line,name):
         # expect a reaction or a new context
@@ -351,16 +302,8 @@ object"""
             self.context=self.REAC2
 
     def handleReac2(self,line,name):
-        # expect a reaction equation and possibly modifiers
-        # of form:
-        # A + B -> C : M1, M2, M3
-        chks=line.split(":")
-        if (len(chks)>1):
-            pars=chks[1].split(",")
-            for par in pars:
-                mdf = libsbml.ModifierSpeciesReference(par)
-                self.r.addModifier(mdf)
-        bits=chks[0].split("->")
+        # expect only a reaction equation (currently)
+        bits=line.split("->")
         if (len(bits)!=2):
             sys.stderr.write('Error: expected "->" on line ')
             sys.stderr.write(str(self.count)+'\n')
@@ -432,20 +375,13 @@ object"""
             trig="=".join(trigbits[1:])
             e=self.m.createEvent()
             e.setId(id)
-            trig=self.trigMangle(trig)
+            trig=self.trigMangleOuter(trig)
             trigger=libsbml.parseFormula(trig)
             self.replaceTime(trigger)
-	    # sys.stderr.write("here1\n")
-            e.setTrigger(libsbml.Trigger(trigger))
-	    # sys.stderr.write("here2\n")
+            e.setTrigger(trigger)
             if (len(bits)==2):
-                e.setDelay(libsbml.Delay(libsbml.parseFormula(bits[1])))
-	    # SPLIT
-	    if (self.mangle>=230):
-	    	asslist=assignments.split(";")
-	    else:
-	  	asslist=assignments.split(",")
-            for ass in asslist:
+                e.setDelay(libsbml.parseFormula(bits[1]))
+            for ass in assignments.split(","):
                 bits=ass.split("=")
                 if (len(bits)!=2):
                     sys.stderr.write('Error: expected exactly one "=" in assignment on')
@@ -457,8 +393,37 @@ object"""
                 ea.setMath(libsbml.parseFormula(math))
             if (name!=""):
                 e.setName(name)
-                
-    def trigMangle(self,trig):
+
+    def trigMangleOuter(self,trig):
+        '''Deals with AND and OR in triggers
+           TODO: Should probably be recursive, e.g. and(and(a,b),c)??'''
+        if 'and(' in trig[:4]:
+            trigger = 'and('
+            inner_and=trig[4:-1] #Strip off and
+            bits=inner_and.split(',')
+            for bit in bits:
+                trigger += self.trigMangleInner(bit) + ','
+            trigger = trigger[:-1] + ')'
+        elif 'or(' in trig[:3]:
+            trigger = 'or('
+            inner_and=trig[3:-1] #Strip off and
+            bits=inner_and.split(',')
+            for bit in bits:
+                trigger += self.trigMangleInner(bit) + ','
+            trigger = trigger[:-1] + ')'    
+        elif 'xor(' in trig[:4]:
+            trigger = 'xor('
+            inner_and=trig[4:-1] #Strip off and
+            bits=inner_and.split(',')
+            for bit in bits:
+                trigger += self.trigMangleInner(bit) + ','
+            trigger = trigger[:-1] + ')'
+        else:
+            trigger = self.trigMangleInner(trig)
+        return trigger
+
+    def trigMangleInner(self,trig):
+        '''Deals with operators for triggers'''
         bits=trig.split(">=")
         if (len(bits)==2):
             return self.binaryOp("geq",bits)
@@ -507,5 +472,6 @@ if __name__=='__main__':
         print d.toSBML()
     except:
         sys.stderr.write('\n\n Unknown parsing error!\n')
+        print sys.exc_info()[0],sys.exc_info()[1]
         sys.exit(1)
     
