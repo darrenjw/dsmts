@@ -1,4 +1,4 @@
-@model:2.3.1=ImmigrationDeath01 "Immigration-Death (002), variant 01"
+@model:2.1.1=ImmigrationDeath01 "Immigration-Death (002), variant 01"
 @units
  substance=item
 @compartments

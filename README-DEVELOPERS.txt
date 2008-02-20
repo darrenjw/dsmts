@@ -1,7 +1,3 @@
-$LastChangedDate$
-$Rev$
-$Author$
-
 README-DEVELOPERS.txt
 ---------------------
 

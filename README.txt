@@ -1,7 +1,3 @@
-$LastChangedDate$
-$Rev$
-$Author$
-
 The Discrete Stochastic Model Test Suite consists of a series of SBML
 models together with brief descriptions of each one, and time-course
 data which may be used to test the output from discrete stochastic

@@ -1,7 +1,3 @@
-#$LastChangedDate: 2006-04-17 09:17:19 +0100 (Mon, 17 Apr 2006) $
-#$Rev: 42 $
-#$Author: colin $
-
 # code for running the suite on gillespie2...
 
 testmodel <- function(model="dsmts-001-01",n=10,tspath=".",
