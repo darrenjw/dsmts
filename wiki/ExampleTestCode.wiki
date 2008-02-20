@@ -1,5 +1,5 @@
 #summary Example R code to test the command-line stochastic simulator, gillespie2
-#labels Phase-Deploy
+#labels Phase-Deploy,Featured
 
 = Introduction =
 
