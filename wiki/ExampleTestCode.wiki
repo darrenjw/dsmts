@@ -1,8 +1,8 @@
-#summary One-sentence summary of this page.
+#summary Example R code to test the command-line stochastic simulator, gillespie2
 #labels Phase-Deploy
 
 = Introduction =
-Example R code to test the command-line stochastic simulator, gillespie2
+
 
 If you have a simulator, you will almost certainly want to write your own code for testing. Irrespective of the language used to build your simulator, you are likely to want to write your test code in a high level language with good support for data analysis and visualisation. Obvious choices include Python, R and Matlab.
 
