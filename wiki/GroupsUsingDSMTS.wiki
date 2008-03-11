@@ -1,0 +1,10 @@
+#summary A list of groups who use DSMTS
+#labels Featured
+
+== Groups/Tools that use DSMTS ==
+
+ * [http://www.basis.ncl.ac.uk/ BASIS]
+ * [http://www.copasi.org COPASI]
+ * [http://www.bio.ifi.lmu.de/FERN/ FERN]
+ * [http://www.sys-bio.org/ sys-bio]
+ * [http://birc.au.dk/Studies/MMiSB/MMiSB_2008/ University of Aarhus] (as part of a course)
