@@ -22,13 +22,12 @@ testmodel <- function(model="dsmts-001-01",n=10,tspath=".",
         for (i in 1:n) {
                 if (verb==TRUE)
                         print(i)
-                runcmd=paste("java fern -m",modelfile,
-                       "-t 50 -n 50 -s",
-                       trunc(runif(1,0,1e6)),
+                runcmd=paste("fern",modelfile,
+                       "50 1",
                        "> /tmp/run.out")
                 system(runcmd)
                 outtab=read.table("/tmp/run.out",
-                        header=TRUE)
+                        header=FALSE)
                 outtab=outtab[,2:ncol(outtab)]
                 xbartab=xbartab+outtab
                 stab=stab+(outtab-meantab)*(outtab-meantab)
@@ -92,5 +91,6 @@ testbatch <- function(mods="model-list",tspath=".",verb=FALSE,...)
  }
 
 testbatch(n=1000)
+# testbatch(n=5)
 
 # eof
