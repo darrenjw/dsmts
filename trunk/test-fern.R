@@ -28,7 +28,7 @@ testmodel <- function(model="dsmts-001-01",n=10,tspath=".",
                 system(runcmd)
                 outtab=read.table("/tmp/run.out",
                         header=FALSE)
-                outtab=outtab[,2:ncol(outtab)]
+                outtab=outtab[1:51,2:ncol(outtab)] # just 51 rows...
                 xbartab=xbartab+outtab
                 stab=stab+(outtab-meantab)*(outtab-meantab)
         }
