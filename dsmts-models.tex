@@ -316,8 +316,8 @@ are \verb$k1=0.0002$ and \verb$k2=0.004$.
 Same as \verb$dsmts-003-01$, except that in the event that the time
 parameter \verb$t$ becomes greater than or equal to 25, the species
 populations are reset to the following values: \verb$P := 100$,
-\verb$P2 := 0$. This is the first model that tests the SBML
-\verb$event$ facility.
+\verb$P2 := 0$. This is the first model that tests SBML
+\verb$event$s with multiple assignments.
 
 \addplots{dsmts-003-03}
 
@@ -326,8 +326,8 @@ populations are reset to the following values: \verb$P := 100$,
 Same as \verb$dsmts-003-01$, except that in the event that the number
 of \verb$P2$ molecules becomes greater than 30, the species
 populations are reset to the following values: \verb$P := 100$, 
-\verb$P2 := 0$. This is another test of SBML event
-handling.
+\verb$P2 := 0$. This is the first test of SBML event
+handling where the event is triggered by a species --- not a timed event.
 
 \addplots{dsmts-003-04}
 
