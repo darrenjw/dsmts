@@ -23,7 +23,7 @@ testmodel <- function(model="dsmts-001-01",n=10,tspath=".",
                 if (verb==TRUE)
                         print(i)
                 runcmd=paste("fern",modelfile,
-                       "50 1",
+                       "-e 1 50",
                        "> /tmp/run.out")
                 system(runcmd)
                 outtab=read.table("/tmp/run.out",
