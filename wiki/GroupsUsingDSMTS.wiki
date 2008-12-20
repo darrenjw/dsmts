@@ -4,7 +4,7 @@
 == Groups/Tools that use DSMTS ==
 
  * [http://www.basis.ncl.ac.uk/ BASIS]
- * [http://cain.sourceforge.net/ CAIN]
+ * [http://cain.sourceforge.net/ CAIN: Stochastic Simulations for Chemical Kinetics]
  * [http://www.copasi.org COPASI]
  * [http://www.bio.ifi.lmu.de/FERN/ FERN]
  * [http://www.prismmodelchecker.org/manual/RunningPRISM/SupportForSBML PRISM]
