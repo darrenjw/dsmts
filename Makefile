@@ -24,9 +24,12 @@ run:
 
 update:
 	svn update
+	svn log|less
 
 commit:
 	svn commit
+	svn update
+	svn log|less
 
 clean:
 	rm -f *.xml model-list *~ dsmts.zip dsmts-*.pdf *.out *Rout *.log *.aux
