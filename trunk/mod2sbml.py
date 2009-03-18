@@ -1,13 +1,13 @@
 #!/usr/bin/python
 # mod2sbml.py
 
-# Updated: 8/6/07
+# Updated: 18/3/09
 
 import libsbml,sys,re,cStringIO
 
-__doc__="""mod2sbml version 2.3.1.1
+__doc__="""mod2sbml version 2.4.1.1
 
-Copyright (C) 2005-2007, Darren J Wilkinson
+Copyright (C) 2005-2009, Darren J Wilkinson
  d.j.wilkinson@ncl.ac.uk
  http://www.staff.ncl.ac.uk/d.j.wilkinson/
 
@@ -16,7 +16,7 @@ Includes modifications by Jeremy Purvis
  
 This is GNU Free Software (General Public License)
 
-Module for parsing SBML-shorthand model files, version 2.3.1,
+Module for parsing SBML-shorthand model files, version 2.4.1,
 and all previous versions
 
 Typical usage:
@@ -127,8 +127,8 @@ object"""
         version=int(yetmorebits[1])
         revision=int(yetmorebits[2])
         self.mangle=100*level+10*version+revision
-        if (self.mangle>231):
-            sys.stderr.write('Error: shorthand version > 2.3.1 - UPGRADE CODE ')
+        if (self.mangle>241):
+            sys.stderr.write('Error: shorthand version > 2.4.1 - UPGRADE CODE ')
             sys.stderr.write('at line'+str(self.count)+'\n')
             raise ParseError
         # sys.stderr.write('lev: '+str(level)+'\n') # debug
@@ -302,7 +302,7 @@ object"""
 
     def handleRules(self,line,name):
         # expect either a rule or a new section
-        # in v.2.2.0, rules are fixed as type AssignmentRule
+        # rules are fixed as type AssignmentRule
         # this requires the assigned species to have atrribute
         # constant set to "False"
         if (line[0]=="@"):
@@ -314,15 +314,9 @@ object"""
                 sys.stderr.write(str(self.count)+'\n')
                 raise ParseError
             (lhs,rhs)=bits
-            # set assigned species 'constant' attribute to 'False'
-            p = self.m.getParameter(lhs)
-            if (p):
-                p.setConstant(False)
-            else:
-                s = self.m.getSpecies(lhs)
-                if (s):
-                    s.setConstant(False)
-            self.m.addRule(libsbml.AssignmentRule(lhs,rhs))
+            value=libsbml.parseFormula(rhs)
+            self.replaceTime(value)
+            self.m.addRule(libsbml.AssignmentRule(lhs,value))
             # print self.d.toSBML()
             
     def handleReac1(self,line,name):
@@ -481,7 +475,7 @@ object"""
 
     def replaceTime(self,ast):
         if (ast.getType()==libsbml.AST_NAME):
-            if (ast.getName()=='t'):
+            if ((ast.getName()=='t') or (ast.getName()=='time')):
                 ast.setType(libsbml.AST_NAME_TIME)
         for node in range(ast.getNumChildren()):
             self.replaceTime(ast.getChild(node))
