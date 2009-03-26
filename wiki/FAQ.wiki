@@ -53,4 +53,4 @@ Answer: Yes, but approximate simulators will obviously fail the standard tests. 
 
 *Question:* How do I cite the test suite in papers I write?
 
-*Answer:* T. W. Evans, C. S. Gillespie, D. J. Wilkinson (2008) The SBML discrete stochastic models test suite, Bioinformatics, published on-line, doi:10.1093/bioinformatics/btm566. 
+*Answer:* T. W. Evans, C. S. Gillespie, D. J. Wilkinson (2008) The SBML discrete stochastic models test suite, Bioinformatics, 24:285-286, doi:10.1093/bioinformatics/btm566. 
