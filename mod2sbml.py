@@ -11,8 +11,9 @@ Copyright (C) 2005-2009, Darren J Wilkinson
  d.j.wilkinson@ncl.ac.uk
  http://www.staff.ncl.ac.uk/d.j.wilkinson/
 
-Includes modifications by Jeremy Purvis
- jep@thefoldingproblem.com
+Includes modifications by:
+  Jeremy Purvis (jep@thefoldingproblem.com)
+  Carole Proctor (c.j.proctor@ncl.ac.uk)
  
 This is GNU Free Software (General Public License)
 
@@ -294,8 +295,23 @@ object"""
             bits=line.split("=")
             p=self.m.createParameter()
             p.setId(bits[0])
-            if (len(bits)==2):
-                p.setValue(eval(bits[1]))
+            if (len(bits)!=2):
+                sys.stderr.write('Error: expected "=" on line ')
+                sys.stderr.write(str(self.count)+'\n')
+                raise ParseError
+            (bit,value)=bits
+            split=re.search('[a-df-z]',value)
+            if (split!=None):
+                split=split.start()
+                opts=value[split:]
+                value=value[:split]
+            else:
+                opts=""
+            while (opts!=""):
+                if (opts[0]=="v"):
+                    p.setConstant(False)
+                opts=opts[1:]
+            p.setValue(eval(value))    
             if (name!=""):
                 p.setName(name)
             #print self.d.toSBML()
