@@ -9,12 +9,12 @@ This readme is for the developers of the test suite - it should not be
 included in the released version of the suite.
 
 It is here to provide documentation for the developers (currently:
-DJW, CSG, TWE).
+DJW and CSG).
 
 The current version can be checked out of the SVN repository with a
 command like:
 
-svn checkout svn://www.calibayes.ncl.ac.uk/dsmts/dsmts/trunk dsmts
+svn checkout https://dsmts.googlecode.com/svn/trunk dsmts
 
 The SVN repository contains just the .mod files and the .csv output
 files. Other stuff (the SBML and the PDF plots, for example) can be
