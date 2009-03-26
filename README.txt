@@ -12,7 +12,7 @@ information about the suite.
 
 The latest version of the Test Suite is available at:
 
-http://www.calibayes.ncl.ac.uk/Resources/dsmts/
+http://dsmts.googlecode.com/
 
 together with credits and further information about how it should be
 used.
