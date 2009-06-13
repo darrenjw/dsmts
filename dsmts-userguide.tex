@@ -80,7 +80,8 @@ SBML model, $n$ independent simulation runs of the simulator should be
 performed. The value of $n$ should not be less than 1,000. However,
 for the statistical tests to have reasonable power to detect problems,
 $n$ should be set to at least 10,000 (but this will be very
-time-consuming for some models). The sample means and standard
+time-consuming for some models) --- see the discussion in
+Section~\ref{sec:ss}. The sample means and standard
 deviations of the species amounts from the simulation runs at
 $t=0,1,\ldots,50$ can be compared with the corresponding values in the
 test suite using the statistical tests described below.
@@ -156,6 +157,23 @@ the entire test suite with $n=10,000$, it wouldn't be particularly
 surprising to fail 2 or 3 mean tests and 5 or 6 standard deviation
 tests in total (summed over all models and all time points), even if
 the simulator is correct.
+
+\subsection{Choice of the sample size, $n$}
+\label{sec:ss}
+
+The power to detect problems with simulator implementation is highly
+dependent of the choice of the sample size, $n$, that is used. A value
+of $n=1,000$ is the absolute minimum value of $n$ that should ever be used,
+and is intended to be used in conjunction with unit tests that are run
+every time the code changes just ensure you haven't completely stuffed
+everything up by making a change to your simulator code. $n=10,000$ is
+needed to have any chance of picking up minor issues, and $n=100,000$,
+or more likely $n=1,000,000$ is needed to detect any subtle
+implementation errors. Obviously you aren't going to want to use such
+large values of $n$ for the entire suite every time you run unit tests,
+but they can be used for particular models when you have been working
+on particular implementation details. Unfortunately Monte Carlo
+testing is not very CPU-efficient, but that's life.
 
 \section{Testing an Approximate Simulator}
 
