@@ -1,6 +1,5 @@
-@model:2.4.1=BirthDeath12 "Birth-death model (001), variant 12"
-@units
- substance=item
+@model:3.1.1=BirthDeath12 "Birth-death model (001), variant 12"
+ s=item,t=second,v=litre
 @compartments
  Cell
 @species

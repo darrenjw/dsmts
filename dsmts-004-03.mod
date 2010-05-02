@@ -1,6 +1,5 @@
-@model:2.4.1=BatchImmigrationDeath03 "Batch Immigration-Death (004), variant 03"
-@units
- substance=item
+@model:3.1.1=BatchImmigrationDeath03 "Batch Immigration-Death (004), variant 03"
+ s=item,t=second,v=litre
 @compartments
  Cell
 @species
