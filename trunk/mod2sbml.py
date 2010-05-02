@@ -1,23 +1,25 @@
-#!/usr/bin/python
+#!/usr/bin/env python
 # mod2sbml.py
 
-# Updated: 18/3/09
+# Updated: 2/5/10
 
-import libsbml,sys,re,cStringIO
+import libsbml,sys,re,cStringIO,traceback
 
-__doc__="""mod2sbml version 2.4.1.1
+__doc__="""mod2sbml version 3.1.1.1
 
-Copyright (C) 2005-2009, Darren J Wilkinson
+Copyright (C) 2005-2010, Darren J Wilkinson
  d.j.wilkinson@ncl.ac.uk
  http://www.staff.ncl.ac.uk/d.j.wilkinson/
 
 Includes modifications by:
   Jeremy Purvis (jep@thefoldingproblem.com)
   Carole Proctor (c.j.proctor@ncl.ac.uk)
+  Mark Muldoon (m.muldoon@man.ac.uk)
+  Lukas Endler (lukas@ebi.ac.uk)
  
 This is GNU Free Software (General Public License)
 
-Module for parsing SBML-shorthand model files, version 2.4.1,
+Module for parsing SBML-shorthand model files, version 3.1.1,
 and all previous versions
 
 Typical usage:
@@ -128,13 +130,15 @@ object"""
         version=int(yetmorebits[1])
         revision=int(yetmorebits[2])
         self.mangle=100*level+10*version+revision
-        if (self.mangle>241):
-            sys.stderr.write('Error: shorthand version > 2.4.1 - UPGRADE CODE ')
+        if (self.mangle>311):
+            sys.stderr.write('Error: shorthand version > 3.1.1 - UPGRADE CODE ')
             sys.stderr.write('at line'+str(self.count)+'\n')
             raise ParseError
-        # sys.stderr.write('lev: '+str(level)+'\n') # debug
-        self.d.setLevelAndVersion(level,version)
-        # sys.stderr.write('Leve: '+str(self.d.getLevel())+'\n') # debug
+        #sys.stderr.write('lev: '+str(level)+'\n') # debug
+        #self.d.setLevelAndVersion(level,version)
+        # HACK due to libsbml4 bug - put back when fixed...
+        self.d=libsbml.SBMLDocument(level,version)
+        #sys.stderr.write('Leve: '+str(self.d.getLevel())+'\n') # debug
         if (len(bits)!=2):
             sys.stderr.write('Error: expected "=" at line ')
             sys.stderr.write(str(self.count)+'\n')
@@ -146,14 +150,43 @@ object"""
         self.context=self.MODEL
         
     def handleModel(self,line,name):
-        # in this context, expect any new context
+        # in this context, expect any new context, or global units
         if (line[0]=='@'):
             self.handleNewContext(line,name)
         else:
-            sys.stderr.write('Error: expected new "@section" ')
-            sys.stderr.write('at line '+str(self.count)+'\n')
-            raise ParseError
-
+            # hopefully a level 3 global units line...
+            if (self.d.getLevel()<3):
+                sys.stderr.write('Error: expected new "@section" ')
+                sys.stderr.write('at line '+str(self.count)+'\n')
+                raise ParseError
+            # parse global units
+            bits=line.split(",")
+            for bit in bits:
+                pair=bit.split("=")
+                if len(pair)!=2:
+                    sys.stderr.write('Error: expected "=" ')
+                    sys.stderr.write('at line '+str(self.count)+'\n')
+                    raise ParseError
+                (unit,value)=pair
+                if (unit=="s"):
+                    self.m.setSubstanceUnits(value)
+                elif (unit=="t"):
+                    self.m.setTimeUnits(value)
+                elif (unit=="v"):
+                    self.m.setVolumeUnits(value)
+                elif (unit=="a"):
+                    self.m.setAreaUnits(value)
+                elif (unit=="l"):
+                    self.m.setLengthUnits(value)
+                elif (unit=="e"):
+                    self.m.setExtentUnits(value)
+                elif (unit=="c"):
+                    self.m.setConversionFactor(value)
+                else:
+                    sys.stderr.write('Error: unknown global unit ')
+                    sys.stderr.write('at line '+str(self.count)+'\n')
+                    raise ParseError
+                    
     def handleNewContext(self,line,name):
         # sys.stderr.write('handling new context '+line[:4]+'\n')
         if (line[:4]=="@com"):
@@ -199,6 +232,9 @@ object"""
                     (id,mods)=bits
                 u=self.m.createUnit()
                 u.setKind(libsbml.UnitKind_forName(id))
+                u.setExponent(1)
+                u.setMultiplier(1)
+                u.setScale(0)
                 mods=mods.split(",")
                 for mod in mods:
                     if (mod[:2]=="e="):
@@ -318,12 +354,19 @@ object"""
 
     def handleRules(self,line,name):
         # expect either a rule or a new section
-        # rules are fixed as type AssignmentRule
+        # changed by lukas: rules are AssignmentRule by default
+        # "@assign:" and "@rate:" let choose between different kinds of rules
         # this requires the assigned species to have atrribute
         # constant set to "False"
-        if (line[0]=="@"):
+        if (line[0]=="@" and (not re.match("@(?:rate|assign)\:",line))):
             self.handleNewContext(line,name)
         else:
+            rule_type=1 # standard set to assignment rule (1)
+            if re.match("@rate\:",line):
+                rule_type=2 # set to rate rule
+            elif re.match("@assign\:",line):
+                rule_type=1 # set to assignment rule
+            line=re.sub("\@\w+\:","",line) # replace rule declaration if there
             bits=line.split("=")
             if (len(bits)!=2):
                 sys.stderr.write('Error: expected "=" on line ')
@@ -332,7 +375,12 @@ object"""
             (lhs,rhs)=bits
             value=libsbml.parseFormula(rhs)
             self.replaceTime(value)
-            self.m.addRule(libsbml.AssignmentRule(lhs,value))
+            if rule_type==1:
+                rule=self.m.createAssignmentRule()
+            elif rule_type==2:
+                rule=self.m.createRateRule()
+            rule.setVariable(lhs)
+            rule.setMath(value)
             # print self.d.toSBML()
             
     def handleReac1(self,line,name):
@@ -368,8 +416,8 @@ object"""
         if (len(chks)>1):
             pars=chks[1].split(",")
             for par in pars:
-                mdf = libsbml.ModifierSpeciesReference(par)
-                self.r.addModifier(mdf)
+                mdf = self.r.createModifier()
+                mdf.setSpecies(par)
         bits=chks[0].split("->")
         if (len(bits)!=2):
             sys.stderr.write('Error: expected "->" on line ')
@@ -385,18 +433,19 @@ object"""
     def handleTerms(self,side,left):
         terms=side.split("+")
         for term in terms:
-            split=re.search('\D',term).start()
+            #split=re.search('\D',term).start()
+            split=re.search('[^\d\.]',term).start()
             if (split==0):
-                sto="1"
+                sto=1.0
             else:
-                sto=term[:split]
+                sto=eval(term[:split])
             id=term[split:]
-            sr=libsbml.SpeciesReference(id)
-            sr.setStoichiometry(eval(sto))
             if (left):
-                self.r.addReactant(sr)
+                sr=self.r.createReactant()
             else:
-                self.r.addProduct(sr)
+                sr=self.r.createProduct()
+            sr.setSpecies(id)
+            sr.setStoichiometry(sto)
 
     def handleReac3(self,line,name):
         # expect a kinetic law, a new reaction or a new context
@@ -407,7 +456,8 @@ object"""
         else:
             bits=line.split(":")
             form=bits[0]
-            kl=libsbml.KineticLaw(form)
+            kl=self.r.createKineticLaw()
+            kl.setFormula(form)
             if (len(bits)>1):
                 pars=bits[1].split(",")
                 for par in pars:
@@ -417,8 +467,9 @@ object"""
                         sys.stderr.write('line '+str(self.count)+'\n')
                         raise ParseError
                     (id,value)=bits
-                    kl.addParameter(libsbml.Parameter(id,eval(value)))
-            self.r.setKineticLaw(kl)
+                    parm=kl.createParameter()
+                    parm.setId(id)
+                    parm.setValue(eval(value))
             self.context=self.REAC1
 
     def handleEvents(self,line,name):
@@ -443,13 +494,14 @@ object"""
             e=self.m.createEvent()
             e.setId(id)
             trig=self.trigMangle(trig)
-            trigger=libsbml.parseFormula(trig)
-            self.replaceTime(trigger)
-	    # sys.stderr.write("here1\n")
-            e.setTrigger(libsbml.Trigger(trigger))
-	    # sys.stderr.write("here2\n")
+            triggerMath=libsbml.parseFormula(trig)
+            self.replaceTime(triggerMath)
+            trigger=e.createTrigger()
+            trigger.setMath(triggerMath)
             if (len(bits)==2):
-                e.setDelay(libsbml.Delay(libsbml.parseFormula(bits[1])))
+                delay=e.createDelay()
+                delayMath=libsbml.parseFormula(bits[1])
+                delay.setMath(delayMath)
 	    # SPLIT
 	    if (self.mangle>=230):
 	    	asslist=assignments.split(";")
@@ -516,6 +568,7 @@ if __name__=='__main__':
         print '<?xml version="1.0" encoding="UTF-8"?>'
         print d.toSBML()
     except:
+        traceback.print_exc(file=sys.stderr)
         sys.stderr.write('\n\n Unknown parsing error!\n')
         sys.exit(1)
     

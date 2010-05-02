@@ -1,6 +1,5 @@
-@model:2.4.1=ImmigrationDeath09 "Immigration-Death (002), variant 10"
-@units
- substance=item
+@model:3.1.1=ImmigrationDeath09 "Immigration-Death (002), variant 10"
+ s=item,t=second,v=litre
 @compartments
  Cell
 @species

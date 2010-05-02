@@ -1,6 +1,5 @@
-@model:2.4.1=Dimerisation04 "Dimerisation model (003), variant 04"
-@units
- substance=item
+@model:3.1.1=Dimerisation04 "Dimerisation model (003), variant 04"
+ s=item,t=second,v=litre
 @compartments
  Cell
 @species
