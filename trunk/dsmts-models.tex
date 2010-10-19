@@ -74,7 +74,7 @@ species is declared to be a boundary condition, which means that its
 value is not determined by the model reactions but remains constant at
 its initial level. (ii) The death reaction is now:
 \[
-X \longrightarrow Sink 
+X \longrightarrow \mathtt{Sink}
 \]
 This model checks that the boundary condition attribute is
 handled correctly.
@@ -107,7 +107,7 @@ in the species declaration.
 \addplots{dsmts-001-09}
 
 \subsubsection{dsmts--001--10}
-
+\sloppy
 Same as \verb$dsmts-001-01$, except that: (i) the \verb$Cell$
 compartment is declared to have \verb$size=1$ (ii)
 \verb$hasOnlySubstanceUnits$ is not declared to be true. Although many
@@ -194,7 +194,7 @@ $2\times X$. This is the first model containing an assignment rule.
 \addplots{dsmts-001-19}
 
 
-
+\clearpage
 \subsection{dsmts--002 --- The immigration-death process}
 
 \subsubsection{dsmts--002--01}
@@ -291,6 +291,7 @@ that the event is triggered at a time not corresponding to a time step.
 
 \addplots{dsmts-002-10}
 
+\clearpage
 \subsection{dsmts--003 ---Dimerisation }
 
 \subsubsection{dsmts--003--01}
@@ -364,7 +365,7 @@ parser.
 
 \addplots{dsmts-003-07}
 
-
+\clearpage
 \subsection{dsmts--004 --- The batch immigration-death process}
 
 \subsubsection{dsmts--004--01}

@@ -1,10 +1,7 @@
-\documentclass[12pt,a4paper]{article}
+\RequirePackage[l2tabu, orthodox]{nag}
+\documentclass[11pt,BCOR1mm,DIV18]{scrartcl}
+
 \usepackage{graphicx,url,amsmath,hyperref}
-\topmargin=-0.5in
-\oddsidemargin=0in
-\evensidemargin=0in
-\textwidth=6.5in
-\textheight=9.5in
 \newcommand{\addplots}[1]{{\par\includegraphics[width=0.5\textwidth]{#1-mean}\includegraphics[width=0.5\textwidth]{#1-sd}\par}}
 
 \title{SBML DSMTS --- User Guide}
@@ -12,7 +9,7 @@
 \date{\today}
 
 \begin{document}
-\sf\maketitle
+\maketitle
 
 \section{Introduction} 
 
@@ -23,8 +20,9 @@ exactly the same set of results. The only sensible method is to run
 the simulation lots of times and check that the distribution of
 outcomes is correct. This can only be tested in a probabilistic way.
 The latest version of this test suite can be obtained from:
-\centerline{\url{http://dsmts.googlecode.com/}}
-
+\begin{center}
+\url{http://dsmts.googlecode.com/}
+\end{center}
 \noindent To cite the test suite:
 
 \noindent
@@ -42,7 +40,7 @@ corresponding to individual reaction events. However, this ``step
 function'' output is easy to map onto a regular time-grid either
 post-hoc, or during the simulation run itself. Further discussion of
 this issue can be found in Chapter~6 of
-Wilkinson~(2006)(\url{http://www.staff.ncl.ac.uk/d.j.wilkinson/smfsb/}),
+Wilkinson~(2006)\footnote{See \url{http://www.staff.ncl.ac.uk/d.j.wilkinson/smfsb/}},
 to which the reader is referred for further discussion of stochastic
 simulation generally, and the use of SBML for discrete stochastic
 models in particular.
