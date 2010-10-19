@@ -1,4 +1,4 @@
-@model:3.1.1=Dimerisation06 "Dimerisation model (003), variant 06"
+@model:3.1.1=Dimerisation07 "Dimerisation model (003), variant 07"
  s=item,t=second,v=litre
 @compartments
  Cell
