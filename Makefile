@@ -18,6 +18,7 @@ plots:
 
 dsmts-userguide.pdf: dsmts-userguide.tex dsmts-models.tex
 	pdflatex dsmts-userguide
+	pdflatex dsmts-userguide
 
 run:
 	R CMD BATCH test-gillespie2.R
