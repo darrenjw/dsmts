@@ -12,7 +12,7 @@ information about the suite.
 
 The latest version of the Test Suite is available at:
 
-http://dsmts.googlecode.com/
+https://github.com/darrenjw/dsmts
 
 together with credits and further information about how it should be
 used.
