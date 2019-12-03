@@ -3,7 +3,11 @@
 
 # Updated: 2/5/10
 
-import libsbml,sys,re,cStringIO,traceback
+import libsbml,sys,re,traceback
+try:
+  from cStringIO import StringIO
+except:
+  from io import StringIO
 
 __doc__="""mod2sbml version 3.1.1.1
 
@@ -63,7 +67,7 @@ and the following public methods:
         """parse(inString)
 parses SBML-shorthand model in inString and returns a libSBML SBMLDocument
 object"""
-        inS=cStringIO.StringIO(inString)
+        inS=StringIO(inString)
         return self.parseStream(inS)
 
     def parseStream(self,inS):
@@ -502,24 +506,24 @@ object"""
                 delay=e.createDelay()
                 delayMath=libsbml.parseFormula(bits[1])
                 delay.setMath(delayMath)
-	    # SPLIT
-	    if (self.mangle>=230):
-	    	asslist=assignments.split(";")
-	    else:
-	  	asslist=assignments.split(",")
-            for ass in asslist:
-                bits=ass.split("=")
-                if (len(bits)!=2):
-                    sys.stderr.write('Error: expected exactly one "=" in assignment on')
-                    sys.stderr.write('line '+str(self.count)+'\n')
-                    raise ParseError
-                (var,math)=bits
-                ea=self.m.createEventAssignment()
-                ea.setVariable(var)
-                ea.setMath(libsbml.parseFormula(math))
-            if (name!=""):
-                e.setName(name)
-                
+        # SPLIT
+        if (self.mangle>=230):
+            asslist=assignments.split(";")
+        else:
+          asslist=assignments.split(",")
+          for ass in asslist:
+              bits=ass.split("=")
+              if (len(bits)!=2):
+                  sys.stderr.write('Error: expected exactly one "=" in assignment on')
+                  sys.stderr.write('line '+str(self.count)+'\n')
+                  raise ParseError
+              (var,math)=bits
+              ea=self.m.createEventAssignment()
+              ea.setVariable(var)
+              ea.setMath(libsbml.parseFormula(math))
+          if (name!=""):
+              e.setName(name)
+              
     def trigMangle(self,trig):
         bits=trig.split(">=")
         if (len(bits)==2):
@@ -565,8 +569,8 @@ if __name__=='__main__':
                 sys.stderr.write(sys.argv[1]+'\n')
                 sys.exit(1)
             d=p.parseStream(s)
-        print '<?xml version="1.0" encoding="UTF-8"?>'
-        print d.toSBML()
+        print ('<?xml version="1.0" encoding="UTF-8"?>')
+        print (d.toSBML())
     except:
         traceback.print_exc(file=sys.stderr)
         sys.stderr.write('\n\n Unknown parsing error!\n')
