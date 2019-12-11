@@ -1,0 +1,10 @@
+*.xml
+*.cps
+*.RESULT
+
+model-list
+venv
+
+.vscode
+.vs
+.idea
